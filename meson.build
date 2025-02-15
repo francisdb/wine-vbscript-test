@@ -8,8 +8,11 @@ lib_args = [
     '-DBUILDING_MESON_LIBRARY',
     '-Wno-c11-extensions',
     '-Wno-unused-parameter',
+    '-Wno-format',
     '-Wno-pedantic',
     '-Wno-incompatible-pointer-types',
+    '-Wno-implicit-function-declaration',
+    '-Wno-int-conversion',
     '-Wno-unused-but-set-parameter',
     '-Wno-unused-but-set-variable',
     '-Wno-unused-variable',
@@ -73,6 +76,8 @@ sources = files(
     'standalone/inc/wine/wine.c'
 )
 
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : true)
 zlog_dep = dependency('zlog', fallback: ['zlog', 'zlog_dep'])
 unity_dep = dependency('unity', fallback: ['unity', 'unity_dep'])
 
@@ -84,7 +89,7 @@ exe = executable(meson.project_name(), exe_sources,
                  include_directories : inc_dir,
                  c_args : lib_args,
                  install : true,
-                 dependencies: [zlog_dep]
+                 dependencies: [m_dep, zlog_dep]
 
 )
 
@@ -112,7 +117,7 @@ test1 = executable('test1',
                    ],
                    c_args : lib_args,
                    include_directories: [ inc_dir, inc ],
-                   dependencies: [ zlog_dep, unity_dependency ],
+                   dependencies: [ m_dep, zlog_dep, unity_dependency ],
 )
 
 test('test1', test1,
