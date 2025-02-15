@@ -5,6 +5,8 @@ project('winetest', 'c',
 # These arguments are only used to build the shared library
 # not the executables that use the library.
 lib_args = [
+    # TODO why do we need this if we set c_std=c99 ???
+    '-D_POSIX_C_SOURCE=199309L',
     '-DBUILDING_MESON_LIBRARY',
     '-Wno-c11-extensions',
     '-Wno-unused-parameter',
