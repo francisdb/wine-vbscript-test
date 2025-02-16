@@ -123,4 +123,4 @@ test1 = executable('test1',
 )
 
 test('test1', test1,
-     should_fail: true)
+     should_fail: false)
