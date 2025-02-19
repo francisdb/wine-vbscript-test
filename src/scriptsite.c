@@ -37,7 +37,11 @@ HRESULT OnScriptError(IActiveScriptError *pscripterror) {
 
     const char* szT = (exception.bstrDescription) ? ConvertBSTRToString(exception.bstrDescription) : "Description unavailable";
 
-    zlog_error(c, "OnScriptError: Script Error at line %lu : %s", nLine, szT);
+
+    // add the bstrSource
+    const char* szSource = (exception.bstrSource) ? ConvertBSTRToString(exception.bstrSource) : "Source unavailable";
+
+    zlog_error(c, "OnScriptError: Script Error 0x%x at line %lu : %s - %s", exception.scode, nLine, szSource, szT);
 
     SysFreeString(bstr);
     SysFreeString(exception.bstrDescription);

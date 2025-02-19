@@ -1,31 +1,40 @@
 #include <stdio.h>
 #include <oleauto.h>
+#include <stdbool.h>
 #include <zlog.h>
 #include "utils.h"
 
 
-
-int main(void) {
-
+bool zlog_init2()
+{
     //int rc = zlog_init("/etc/zlog.conf");
     int rc = zlog_init_from_string("[formats]\n"
-                                   "simple = \"%-20c %-5V - %m%n\"\n"
-                                   "[rules]\n"
-                                   "*.DEBUG    >stdout;simple\n");
+        "simple = \"%-20c %-5V - %m%n\"\n"
+        "[rules]\n"
+        "*.DEBUG    >stdout;simple\n");
     if (rc) {
         printf("zlog init failed\n");
-        return -1;
+        return false;
     }
     zlog_category_t* c = zlog_get_category("main");
 
     if (!c) {
         printf("get cat fail\n");
         zlog_fini();
-        return -2;
+        return false;
     }
 
 
     zlog_info(c, "Testing VBScript");
+    return true;
+}
+
+int main(void) {
+    if (!zlog_init2())
+    {
+        printf("Failed to init logger");
+        exit(2);
+    }
 
     HRESULT hr;
 
