@@ -139,6 +139,12 @@ BSTR get_vbscript_string(int id)
         case VBSE_UNQUALIFIED_REFERENCE:
             swprintf(buf, ARRAY_SIZE(buf), L"VBSE_UNQUALIFIED_REFERENCE");
             break;
+        case VBS_COMPILE_ERROR:
+            swprintf(buf, ARRAY_SIZE(buf), L"VBS_COMPILE_ERROR");
+            break;
+        case VBS_RUNTIME_ERROR:
+            swprintf(buf, ARRAY_SIZE(buf), L"VBS_RUNTIME_ERROR");
+            break;
         case VBS_UNKNOWN_RUNTIME_ERROR:
             swprintf(buf, ARRAY_SIZE(buf), L"VBS_UNKNOWN_RUNTIME_ERROR");
             break;

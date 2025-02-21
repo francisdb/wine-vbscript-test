@@ -126,6 +126,11 @@ unsigned char __cdecl __wine_dbg_get_channel_flags(struct __wine_debug_channel *
       return (1 << __WINE_DBCL_ERR) | (1 << __WINE_DBCL_TRACE) | (1 << __WINE_DBCL_FIXME);
    }
 
+   if (!strcmp(channel->name, "vbscript_disas"))
+   {
+      return (1 << __WINE_DBCL_ERR) | (1 << __WINE_DBCL_TRACE) | (1 << __WINE_DBCL_FIXME);
+   }
+
    if (!strcmp(channel->name, "variant"))
    {
       return (1 << __WINE_DBCL_ERR) | (1 << __WINE_DBCL_TRACE) | (1 << __WINE_DBCL_FIXME);

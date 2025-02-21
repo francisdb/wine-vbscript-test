@@ -65,7 +65,7 @@ extern int parser_debug;
     tEXPRESSION = 258,             /* tEXPRESSION  */
     tNL = 259,                     /* tNL  */
     tEMPTYBRACKETS = 260,          /* tEMPTYBRACKETS  */
-    tEXPRLBRACKET = 261,           /* tEXPRLBRACKET  */
+    // tEXPRLBRACKET = 261,           /* tEXPRLBRACKET  */
     tLTEQ = 262,                   /* tLTEQ  */
     tGTEQ = 263,                   /* tGTEQ  */
     tNEQ = 264,                    /* tNEQ  */

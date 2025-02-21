@@ -3,6 +3,14 @@
 #include "scriptsite.h"
 #include "utils.h"
 
+static LastErrorInfo g_lastErrorInfo = {0};
+
+const LastErrorInfo* GetLastErrorInfo() {
+    return &g_lastErrorInfo;
+}
+void ClearErrorInfo(){
+    g_lastErrorInfo.scode = 0;
+}
 
 HRESULT OnScriptError(IActiveScriptError *pscripterror) {
     DWORD dwCookie;
@@ -23,25 +31,23 @@ HRESULT OnScriptError(IActiveScriptError *pscripterror) {
     hr = pscripterror->lpVtbl->GetSourceLineText(pscripterror, &bstr);
     if (FAILED(hr)) {
         zlog_debug(c, "OnScriptError: Failed to get source line text: 0x%08lx %s", hr, HResultToString(hr));
-        //return hr;
     }
 
     hr = pscripterror->lpVtbl->GetExceptionInfo(pscripterror, &exception);
     if (FAILED(hr)) {
         zlog_debug(c, "OnScriptError: Failed to get exception info: 0x%08lx %s", hr, HResultToString(hr));
         SysFreeString(bstr);
-        //return hr;
     }
 
     nLine++;
 
     const char* szT = (exception.bstrDescription) ? ConvertBSTRToString(exception.bstrDescription) : "Description unavailable";
-
-
-    // add the bstrSource
     const char* szSource = (exception.bstrSource) ? ConvertBSTRToString(exception.bstrSource) : "Source unavailable";
 
-    zlog_error(c, "OnScriptError: Script Error 0x%x at line %lu : %s - %s", exception.scode, nLine, szSource, szT);
+    zlog_error(c, "OnScriptError: Script Error 0x%x at line %lu pos %d : %s - %s", exception.scode, nLine, nChar, szSource, szT);
+
+    // Update the global last error info
+    g_lastErrorInfo.scode = exception.scode;
 
     SysFreeString(bstr);
     SysFreeString(exception.bstrDescription);
@@ -97,6 +103,7 @@ ULONG STDMETHODCALLTYPE ScriptSite_AddRef(IActiveScriptSite *This) {
 }
 
 ULONG STDMETHODCALLTYPE ScriptSite_Release(IActiveScriptSite *This) {
+    zlog_info(zlog_get_category("scriptsite"), "OnScriptRelease");
     ScriptSite *site = (ScriptSite *)This;
     ULONG ref = InterlockedDecrement(&site->ref);
     if (ref == 0) {
@@ -120,6 +127,7 @@ HRESULT STDMETHODCALLTYPE ScriptSite_GetDocVersionString(IActiveScriptSite *This
 }
 
 HRESULT STDMETHODCALLTYPE ScriptSite_OnScriptTerminate(IActiveScriptSite *This, const VARIANT *pvarResult, const EXCEPINFO *pexcepinfo) {
+    zlog_info(zlog_get_category("scriptsite"), "OnScriptTerminate");
     return S_OK;
 }
 
@@ -132,10 +140,12 @@ HRESULT STDMETHODCALLTYPE ScriptSite_OnScriptError(IActiveScriptSite *This, IAct
 }
 
 HRESULT STDMETHODCALLTYPE ScriptSite_OnEnterScript(IActiveScriptSite *This) {
+    zlog_info(zlog_get_category("scriptsite"), "OnEnterScript");
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE ScriptSite_OnLeaveScript(IActiveScriptSite *This) {
+    zlog_info(zlog_get_category("scriptsite"), "OnLeaveScript");
     return S_OK;
 }
 

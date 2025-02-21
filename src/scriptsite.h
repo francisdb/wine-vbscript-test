@@ -7,6 +7,10 @@
 
 #include <activscp.h>
 
+typedef struct {
+    SCODE scode;
+} LastErrorInfo;
+
 // Define the IActiveScriptSite structure
 typedef struct {
     IActiveScriptSite IActiveScriptSite_iface;
@@ -14,5 +18,8 @@ typedef struct {
 } ScriptSite;
 
 ScriptSite *CreateScriptSite();
+
+const LastErrorInfo* GetLastErrorInfo();
+void ClearErrorInfo();
 
 #endif //SCRIPTSITE_H

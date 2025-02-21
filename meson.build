@@ -28,8 +28,8 @@ lib_args = [
     '-DWINE_UNICODE_NATIVE',
 #    '-DWINE_NO_TRACE_MSGS',
 #    '-DWINE_NO_DEBUG_MSGS',
-#    '-D_DEBUG',
-    # parser debugging (does not work?)
+    '-D_DEBUG',
+    # parser debugging (does not work as meson does not call bison)
     #'-DPARSER_DEBUG=1',
     #'-DYYDEBUG=1',
     '-D__forceinline=__attribute__((always_inline)) inline'

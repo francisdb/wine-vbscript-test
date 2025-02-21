@@ -1074,9 +1074,9 @@ static HRESULT compile_assignment(compile_ctx_t *ctx, expression_t *left, expres
         break;
     case EXPR_CALL:
         call_expr = (call_expression_t*)left;
-#ifndef __STANDALONE__
+//#ifndef __STANDALONE__
         assert(call_expr->call_expr->type == EXPR_MEMBER);
-#endif
+//#endif
         member_expr = (member_expression_t*)call_expr->call_expr;
         break;
     default:
@@ -1122,6 +1122,22 @@ static HRESULT compile_assign_statement(compile_ctx_t *ctx, assign_statement_t *
 static HRESULT compile_call_statement(compile_ctx_t *ctx, call_statement_t *stat)
 {
     HRESULT hres;
+
+    /* It's challenging for parser to distinguish parameterized assignment with one argument from call
+     * with equality expression argument, so we do it in compiler. */
+    if(stat->expr->args && !stat->expr->args->next && stat->expr->args->type == EXPR_EQUAL) {
+        binary_expression_t *eqexpr = (binary_expression_t*)stat->expr->args;
+
+        if(eqexpr->left->type == EXPR_BRACKETS || eqexpr->left->type == EXPR_MEMBER) {
+            call_expression_t new_call = *stat->expr;
+
+            WARN("converting call expr to assign expr\n");
+
+            new_call.args = ((unary_expression_t*)eqexpr->left)->subexpr;
+            return compile_assignment(ctx, &new_call, eqexpr->right, FALSE);
+        }
+    }
+
 
     hres = compile_call_expression(ctx, stat->expr, FALSE);
     if(FAILED(hres))

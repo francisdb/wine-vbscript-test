@@ -455,7 +455,7 @@ IntegerValue
     | tInt                          { $$ = $1; }
 
 PrimaryExpression
-    : tEXPRLBRACKET Expression ')'            { $$ = new_unary_expression(ctx, EXPR_BRACKETS, $2); }
+    : '(' Expression ')'            { $$ = new_unary_expression(ctx, EXPR_BRACKETS, $2); }
     | tME                           { $$ = new_expression(ctx, EXPR_ME, 0); CHECK_ERROR; }
 
 ClassDeclaration
@@ -754,9 +754,10 @@ static call_expression_t *make_call_expression(parser_ctx_t *ctx, expression_t *
         FIXME("Invalid syntax: missing comma\n");
         ctx->hres = E_FAIL;
         return NULL;
+    }else {
+        call_expr->args->next = arguments->next;
     }
 
-    call_expr->args->next = arguments->next;
     return call_expr;
 }
 
